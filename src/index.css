@@ -2,5 +2,12 @@
 
 body {
     background-color: #000000;
-    color: lightgray;
+    margin: 0;
+
+    font-family: 'Montserrat', sans-serif;
+}
+
+#root {
+    width: 100vw;
+    height: 100vh;
 }
