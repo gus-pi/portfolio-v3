@@ -10,7 +10,7 @@ import Interface from './components/Interface';
 const App = () => {
     return (
         <Canvas shadows camera={{ position: [3, 3, 3], fov: 30 }}>
-            <color attach="background" args={['#ececec']} />
+            <color attach="background" args={['#1a191b']} />
             <ScrollControls pages={4} damping={0.1}>
                 <Experience />
                 <Scroll html>
