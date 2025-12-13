@@ -1,13 +1,14 @@
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, useGLTF } from '@react-three/drei';
+import { Avatar } from './Avatar';
+import { Astronaut } from './Astronaut';
 
 export const Experience = () => {
     return (
         <>
-            {/* <OrbitControls /> */}
-            <mesh>
-                <boxGeometry />
-                <meshNormalMaterial />
-            </mesh>
+            <OrbitControls />
+
+            <Astronaut />
+            <ambientLight intensity={1} />
         </>
     );
 };
