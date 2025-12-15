@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useGraph } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
+import { useAnimations, useFBX, useGLTF } from '@react-three/drei';
 import { SkeletonUtils } from 'three-stdlib';
 import type { JSX } from 'react';
 import type { GLTF } from 'three-stdlib';
+import type { Group } from 'three';
 
 type GLTFAction = THREE.AnimationClip;
 
@@ -33,37 +34,58 @@ type GLTFResult = GLTF & {
 };
 
 export function Astronaut(props: JSX.IntrinsicElements['group']) {
+    const group = useRef<Group | null>(null);
     const { scene } = useGLTF('models/astronaut.glb');
     const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
     const { nodes, materials } = useGraph(clone) as unknown as GLTFResult;
 
+    const { animations: astronautAnimations } = useFBX('animations/float.fbx');
+
+    astronautAnimations[0].name = 'Float';
+
+    const { actions } = useAnimations(astronautAnimations, group);
+
+    useEffect(() => {
+        actions['Float']?.reset().play();
+    }, []);
+
     return (
-        <group {...props} dispose={null}>
-            <primitive object={nodes.mixamorigHips} />
-            <primitive object={nodes.Ctrl_Master} />
-            <primitive object={nodes.Ctrl_ArmPole_IK_Left} />
-            <primitive object={nodes.Ctrl_Hand_IK_Left} />
-            <primitive object={nodes.Ctrl_ArmPole_IK_Right} />
-            <primitive object={nodes.Ctrl_Hand_IK_Right} />
-            <primitive object={nodes.Ctrl_Foot_IK_Left} />
-            <primitive object={nodes.Ctrl_LegPole_IK_Left} />
-            <primitive object={nodes.Ctrl_Foot_IK_Right} />
-            <primitive object={nodes.Ctrl_LegPole_IK_Right} />
-            <skinnedMesh
-                geometry={nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0.geometry}
-                material={materials.SuitMat}
-                skeleton={nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0.skeleton}
-            />
-            <skinnedMesh
-                geometry={nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0_1.geometry}
-                material={materials.BackpackMat}
-                skeleton={nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0_1.skeleton}
-            />
-            <skinnedMesh
-                geometry={nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0_2.geometry}
-                material={materials.HelmetMat}
-                skeleton={nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0_2.skeleton}
-            />
+        <group {...props} ref={group} dispose={null}>
+            <group rotation-x={-Math.PI / 2}>
+                <primitive object={nodes.mixamorigHips} />
+                <primitive object={nodes.Ctrl_Master} />
+                <primitive object={nodes.Ctrl_ArmPole_IK_Left} />
+                <primitive object={nodes.Ctrl_Hand_IK_Left} />
+                <primitive object={nodes.Ctrl_ArmPole_IK_Right} />
+                <primitive object={nodes.Ctrl_Hand_IK_Right} />
+                <primitive object={nodes.Ctrl_Foot_IK_Left} />
+                <primitive object={nodes.Ctrl_LegPole_IK_Left} />
+                <primitive object={nodes.Ctrl_Foot_IK_Right} />
+                <primitive object={nodes.Ctrl_LegPole_IK_Right} />
+                <skinnedMesh
+                    geometry={nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0.geometry}
+                    material={materials.SuitMat}
+                    skeleton={nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0.skeleton}
+                />
+                <skinnedMesh
+                    geometry={
+                        nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0_1.geometry
+                    }
+                    material={materials.BackpackMat}
+                    skeleton={
+                        nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0_1.skeleton
+                    }
+                />
+                <skinnedMesh
+                    geometry={
+                        nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0_2.geometry
+                    }
+                    material={materials.HelmetMat}
+                    skeleton={
+                        nodes.playerdarky_mrustspacesuitmdl_body_Spacesuit_Suit_LOD0_2.skeleton
+                    }
+                />
+            </group>
         </group>
     );
 }
