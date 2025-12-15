@@ -1,13 +1,13 @@
 import { OrbitControls, useGLTF } from '@react-three/drei';
-import { Avatar } from './Avatar';
 import { Astronaut } from './Astronaut';
 
 export const Experience = () => {
     return (
         <>
             <OrbitControls />
-
-            <Astronaut />
+            <group position-y={-1}>
+                <Astronaut />
+            </group>
             <ambientLight intensity={1} />
         </>
     );
