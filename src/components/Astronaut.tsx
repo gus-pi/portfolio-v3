@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import React, { useEffect, useRef } from 'react';
-import { useGraph } from '@react-three/fiber';
+import { useFrame, useGraph } from '@react-three/fiber';
 import { useAnimations, useFBX, useGLTF } from '@react-three/drei';
 import { SkeletonUtils } from 'three-stdlib';
 import type { JSX } from 'react';
 import type { GLTF } from 'three-stdlib';
 import type { Group } from 'three';
+import { useControls } from 'leva';
 
 type GLTFAction = THREE.AnimationClip;
 
@@ -41,9 +42,25 @@ export function Astronaut(props: JSX.IntrinsicElements['group']) {
 
     const { animations: astronautAnimations } = useFBX('animations/float.fbx');
 
+    const { headFollow, cursorFollow } = useControls({
+        headFollow: false,
+        cursorFollow: false,
+    });
+
     astronautAnimations[0].name = 'Float';
 
     const { actions } = useAnimations(astronautAnimations, group);
+
+    useFrame((state) => {
+        if (headFollow) {
+            group.current?.getObjectByName('mixamorigSpine1')?.lookAt(state.camera.position);
+        }
+
+        if (cursorFollow) {
+            const target = new THREE.Vector3(state.pointer.x, state.pointer.y, 1);
+            group.current?.getObjectByName('mixamorigNeck')?.lookAt(target);
+        }
+    });
 
     useEffect(() => {
         actions['Float']?.reset().play();
