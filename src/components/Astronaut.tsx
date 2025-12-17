@@ -34,7 +34,12 @@ type GLTFResult = GLTF & {
     animations: GLTFAction[];
 };
 
-export function Astronaut(props: JSX.IntrinsicElements['group']) {
+type AstronautProps = JSX.IntrinsicElements['group'] & {
+    animation?: string;
+};
+
+export function Astronaut(props: AstronautProps) {
+    const { animation } = props;
     const group = useRef<Group | null>(null);
     const { scene } = useGLTF('models/astronaut.glb');
     const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
@@ -46,8 +51,11 @@ export function Astronaut(props: JSX.IntrinsicElements['group']) {
         headFollow: false,
         cursorFollow: false,
     });
+    console.log(astronautAnimations);
 
     astronautAnimations[0].name = 'Float';
+    astronautAnimations[1].name = 'Wave';
+    astronautAnimations[2].name = 'Fall';
 
     const { actions } = useAnimations(astronautAnimations, group);
 
@@ -63,8 +71,13 @@ export function Astronaut(props: JSX.IntrinsicElements['group']) {
     });
 
     useEffect(() => {
-        actions['Float']?.reset().play();
-    }, []);
+        if (animation) {
+            actions[animation]?.reset().fadeIn(0.5).play();
+            return () => {
+                actions[animation]?.reset().fadeOut(0.5).stop();
+            };
+        }
+    }, [animation]);
 
     return (
         <group {...props} ref={group} dispose={null}>
