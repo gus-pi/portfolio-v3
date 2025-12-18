@@ -71,13 +71,18 @@ export function Astronaut(props: AstronautProps) {
     });
 
     useEffect(() => {
-        if (animation) {
-            actions[animation]?.reset().fadeIn(0.5).play();
-            return () => {
-                actions[animation]?.reset().fadeOut(0.5).stop();
-            };
+        if (animation && actions[animation]) {
+            // Fade out all other animations
+            Object.keys(actions).forEach((key) => {
+                if (key !== animation) {
+                    actions[key]?.fadeOut(0.5);
+                }
+            });
+
+            // Play the selected animation
+            actions[animation].reset().fadeIn(0.5).play();
         }
-    }, [animation]);
+    }, [animation, actions]);
 
     return (
         <group {...props} ref={group} dispose={null}>
